@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react'
 import { Button, Stack, Grid } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { observer } from 'mobx-react'
+import { toJS } from 'mobx'
 
 import { appStore, usersStore, ticketsStore } from '../mobx'
 import { sortHelper, blankTicket } from '../helpers'
 import { TChange, TTicket } from '../types/types'
 import { GridItem, Ticket } from '.'
 import { Dropdown } from '../UI'
-import { toJS } from 'mobx'
 
 export const Project = observer(() => {
   const { tickets, getTickets } = ticketsStore
@@ -26,12 +26,10 @@ export const Project = observer(() => {
   useEffect(() => {
     if (tickets.length && id) {
       setHeaderOpen(false)
-      const newQueue = sortHelper(tickets, sort)
-      setQueue(newQueue)
+      setQueue(sortHelper(tickets, sort))
     } else {
       getTickets(id)
-    }
-    // eslint-disable-next-line
+    } // eslint-disable-next-line
   }, [tickets])
 
   const createTicket = () => {
@@ -65,8 +63,7 @@ export const Project = observer(() => {
   const sortHandler = (e: TChange) => {
     const { value } = e.target
     setSort(value)
-    const newQueue = sortHelper(tickets, value)
-    setQueue(newQueue)
+    setQueue(sortHelper(tickets, value))
   }
 
   return (
