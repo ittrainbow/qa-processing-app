@@ -8,6 +8,7 @@ import { sortHelper, blankTicket } from '../helpers'
 import { TChange, TTicket } from '../types/types'
 import { GridItem, Ticket } from '.'
 import { Dropdown } from '../UI'
+import { toJS } from 'mobx'
 
 export const Project = observer(() => {
   const { tickets, getTickets } = ticketsStore
@@ -25,50 +26,36 @@ export const Project = observer(() => {
   useEffect(() => {
     if (tickets.length && id) {
       setHeaderOpen(false)
-      setQueue(tickets)
+      const newQueue = sortHelper(tickets, sort)
+      setQueue(newQueue)
     } else {
       getTickets(id)
-    } // eslint-disable-next-line
+    }
+    // eslint-disable-next-line
   }, [tickets])
 
   const createTicket = () => {
     setCreating(true)
-    const date = new Date().getTime()
+
     if (user) {
+      const date = new Date().getTime()
       const userid = user.id || 0
-      const ticket: TTicket = {
-        ...blankTicket,
-        createdAt: date,
-        updatedAt: date,
-        projectid: id,
-        creator: userid,
-        updater: userid
-      }
+      const fillTicket = { createdAt: date, updatedAt: date, projectid: id, creator: userid, updater: userid }
+      const ticket: TTicket = Object.assign(blankTicket, fillTicket)
       setTempTicket(ticket)
       setModalOpen(true)
     }
   }
 
-  const openModalHandler = (value: TTicket) => {
+  const openHandler = (value: TTicket) => {
     setTempTicket(value)
     setModalOpen(true)
   }
 
-  const closeModalHandler = () => {
+  const closeHandler = () => {
     setCreating(false)
     setModalOpen(false)
   }
-
-  const drawModal = () =>
-    modalOpen && (
-      <Ticket
-        tempTicket={tempTicket}
-        modalOpen={modalOpen}
-        onClose={closeModalHandler}
-        setTicket={setTempTicket}
-        creating={creating}
-      />
-    )
 
   const filterHandler = (e: TChange) => {
     const { value } = e.target
@@ -82,24 +69,34 @@ export const Project = observer(() => {
     setQueue(newQueue)
   }
 
-  const filterDropDown = () => <Dropdown label="Filter" value={filter} onChange={filterHandler} />
-  const sortDropDown = () => <Dropdown label="Sort" value={sort} onChange={sortHandler} />
-
   return (
     <Stack mb={2} ml={2}>
       <Stack direction="row" ml={6} spacing={1}>
-        <Stack width={210}>{filterDropDown()}</Stack>
-        <Stack width={210}>{sortDropDown()}</Stack>
+        <Stack>
+          <Dropdown label="Filter" value={filter} onChange={filterHandler} />
+        </Stack>
+        <Stack>
+          <Dropdown label="Sort" value={sort} onChange={sortHandler} />
+        </Stack>
       </Stack>
       <Button onClick={createTicket} disabled={!token}>
         Create ticket
       </Button>
       <Grid container spacing={2}>
-        {queue.map((el: TTicket) => (
-          <GridItem el={el} key={el.issue} filter={filter} handler={openModalHandler} tickets={tickets} />
-        ))}
+        {queue.map((el: TTicket) => {
+          const ticket = toJS(el)
+          return <GridItem ticket={ticket} key={ticket.issue} filter={filter} onClick={() => openHandler(ticket)} />
+        })}
       </Grid>
-      {drawModal()}
+      {modalOpen && (
+        <Ticket
+          ticket={tempTicket}
+          modalOpen={modalOpen}
+          onClose={closeHandler}
+          setTicket={setTempTicket}
+          creating={creating}
+        />
+      )}
     </Stack>
   )
 })

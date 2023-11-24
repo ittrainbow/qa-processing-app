@@ -6,24 +6,24 @@ import { ticketsStore, usersStore } from '../mobx'
 import { Dropdown } from '../UI/Dropdown'
 import { useStyles } from '../helpers'
 
-export const Ticket = observer(({ tempTicket, modalOpen, onClose, creating, setTicket }: TTicketProps) => {
-  const { issue, description, solution, severity, problem, status } = tempTicket
+export const Ticket = observer(({ ticket, modalOpen, onClose, creating, setTicket }: TTicketProps) => {
+  const { issue, description, solution, severity, problem, status } = ticket
   const { submitTicket, createTicket, deleteTicket } = ticketsStore
   const { user } = usersStore
   const classes = useStyles()
 
   const submitHandler = () => {
-    const ticket = { ...tempTicket, toucher: user.id, updated: new Date().getTime() }
-    creating ? createTicket(ticket) : submitTicket(ticket)
+    const newTicket = { ...ticket, toucher: user.id, updated: new Date().getTime() }
+    creating ? createTicket(newTicket) : submitTicket(newTicket)
     onClose()
   }
 
   const deleteHandler = () => {
-    if (window.confirm('Delete ticket?')) deleteTicket(tempTicket)
+    if (window.confirm('Delete ticket?')) deleteTicket(ticket)
     onClose()
   }
 
-  const onChange = (e: TChange, field: string) => setTicket({ ...tempTicket, [field]: e.target.value })
+  const onChange = (e: TChange, field: string) => setTicket({ ...ticket, [field]: e.target.value })
 
   return (
     <Modal className={classes.modal} open={modalOpen} onClose={onClose}>
@@ -32,9 +32,9 @@ export const Ticket = observer(({ tempTicket, modalOpen, onClose, creating, setT
         <TextField label="Description" value={description} multiline onChange={(e) => onChange(e, 'description')} />
         <TextField label="Solution" value={solution} multiline rows={4} onChange={(e) => onChange(e, 'solution')} />
         <Stack justifyContent="center" alignItems="center" direction="row" spacing={1}>
-          <Dropdown label="Severity" value={severity} width={100} onChange={(e: TChange) => onChange(e, 'severity')} />
-          <Dropdown label="Problem" value={problem} width={100} onChange={(e: TChange) => onChange(e, 'problem')} />
-          <Dropdown label="Status" value={status} width={100} onChange={(e: TChange) => onChange(e, 'status')} />
+          <Dropdown label="Severity" value={severity} onChange={(e: TChange) => onChange(e, 'severity')} />
+          <Dropdown label="Problem" value={problem} onChange={(e: TChange) => onChange(e, 'problem')} />
+          <Dropdown label="Status" value={status} onChange={(e: TChange) => onChange(e, 'status')} />
         </Stack>
         <ButtonGroup variant="text" fullWidth={true}>
           <Button disabled={!status || !problem || !severity || !issue || !user.name} onClick={submitHandler}>

@@ -37,7 +37,7 @@ export type TAuth = {
 }
 
 export type TTicketProps = {
-  tempTicket: TTicket
+  ticket: TTicket
   modalOpen: boolean
   creating: boolean
   onClose: () => void
@@ -48,7 +48,6 @@ export type TDropdownProps = {
   label: string
   onChange: (e: TChange) => void
   value: string
-  width?: number
 }
 
 export type TInput = React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -56,10 +55,9 @@ export type TInput = React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 export type TChange = TInput | SelectChangeEvent
 
 export type TGridItemProps = {
-  el: TTicket
+  ticket: TTicket
   filter: string
-  handler: (value: TTicket) => void
-  tickets: TTicket[]
+  onClick: (value: TTicket) => void
 }
 
 export type TList = Array<{ value: string; text: string }>

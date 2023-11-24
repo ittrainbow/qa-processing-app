@@ -3,12 +3,14 @@ import moment from 'moment/moment'
 import { toJS } from 'mobx'
 
 import { useStyles, iconHelper, textHelper } from '../helpers'
+import { usersStore, ticketsStore } from '../mobx'
 import { TGridItemProps } from '../types/types'
 import { defaultUser } from '../types/initials'
-import { usersStore } from '../mobx'
 
-export const GridItem = ({ el, filter, handler, tickets }: TGridItemProps) => {
-  const { issue, createdAt, creator, id, severity, status, problem, updatedAt, updater } = el
+const { tickets } = ticketsStore
+
+export const GridItem = ({ ticket, filter, onClick }: TGridItemProps) => {
+  const { issue, createdAt, creator, id, severity, status, problem, updatedAt, updater } = ticket
   const { users } = usersStore
   const classes = useStyles()
 
@@ -21,7 +23,7 @@ export const GridItem = ({ el, filter, handler, tickets }: TGridItemProps) => {
 
   const isotime = (timestamp: number) => moment(timestamp).format().substring(0, 16).replace(/T/g, ' ')
 
-  const viewTickethandler = () => id && handler(tickets[id])
+  const viewTickethandler = () => id && onClick(tickets[id])
 
   return filter !== 'open' || status !== 'done' ? (
     <Grid item key={updatedAt} className={classes.card}>
