@@ -1,7 +1,7 @@
 import { ButtonGroup, Modal, TextField, Stack, Button } from '@mui/material'
 import { observer } from 'mobx-react'
 
-import { TChange, TTicketProps } from '../types/types'
+import { TChange, TTicket, TTicketProps } from '../types/types'
 import { ticketsStore, usersStore } from '../mobx'
 import { Dropdown } from '../UI/Dropdown'
 import { useStyles } from '../helpers'
@@ -13,7 +13,8 @@ export const Ticket = observer(({ ticket, modalOpen, onClose, creating, setTicke
   const classes = useStyles()
 
   const submitHandler = () => {
-    const newTicket = { ...ticket, toucher: user.id, updated: new Date().getTime() }
+    const updater = (user.id || 0).toString()
+    const newTicket: TTicket = { ...ticket, updater, updated: new Date().getTime() }
     creating ? createTicket(newTicket) : submitTicket(newTicket)
     onClose()
   }

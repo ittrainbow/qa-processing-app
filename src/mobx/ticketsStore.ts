@@ -16,24 +16,24 @@ class TicketsStoreClass {
       getTickets: action,
       submitTicket: action,
       createTicket: action,
-      deleteTicket: action
+      deleteTicket: action,
+      trimAts: action
     })
+  }
+
+  trimAts: (value: TTicket) => TTicket = (value) => {
+    delete value.createdAt
+    delete value.updatedAt
+    return value
   }
 
   setTickets: (data: TTicket[]) => void = (data) => (this.tickets = data)
 
   getTickets: (id: string) => void = async (id) => {
     await axios
-      .get(`http://localhost:5000/api/projects/${id}`)
+      .get(`http://localhost:5000/api/tickets/${id}`)
       .then((response) => response.data)
-      .then((data) => {
-        return data.map((el: TTicket) => {
-          const createdAt = Number(el.createdAt)
-          const updatedAt = Number(el.updatedAt)
-
-          return { ...el, createdAt, updatedAt }
-        })
-      })
+      .then((data) => data.map((el: TTicket) => this.trimAts(el)))
       .then((data) => this.setTickets(data))
       .catch((error) => handleError(error))
       .finally(() => setLoading(false))
@@ -45,7 +45,7 @@ class TicketsStoreClass {
     const updateTickets: TTicket[] = toJS(this.tickets)
     updateTickets[updateIndex] = ticket
     await axios
-      .put(`http://localhost:5000/api/projects/updateticket`, ticket)
+      .put(`http://localhost:5000/api/tickets/update`, ticket)
       .then(() => this.setTickets(updateTickets))
       .catch((error) => handleError(error))
       .finally(() => setLoading(false))
@@ -53,13 +53,11 @@ class TicketsStoreClass {
 
   createTicket: (ticket: TTicket) => void = async (ticket) => {
     setLoading(true)
-    const lastId: number = await axios
-      .get(`http://localhost:5000/api/projects/tickets/getlast`)
-      .then((response) => response.data)
-    ticket.id = lastId + 1
     await axios
-      .post(`http://localhost:5000/api/projects/createticket`, ticket)
-      .then(() => this.setTickets(this.tickets.concat(ticket)))
+      .post(`http://localhost:5000/api/tickets/create`, ticket)
+      .then((response) => response.data)
+      .then((ticket) => this.trimAts(ticket))
+      .then((ticket) => this.setTickets(this.tickets.concat(ticket)))
       .catch((error) => handleError(error))
       .finally(() => setLoading(false))
   }
@@ -69,7 +67,7 @@ class TicketsStoreClass {
     const { id } = ticket
     const updateTickets: TTicket[] = toJS(this.tickets).filter((ticket: TTicket) => ticket.id !== id)
     await axios
-      .post(`http://localhost:5000/api/projects/deleteticket`, ticket)
+      .post(`http://localhost:5000/api/tickets/delete`, ticket)
       .then(() => this.setTickets(updateTickets))
       .catch((error) => handleError(error))
       .finally(() => setLoading(false))

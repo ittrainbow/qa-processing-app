@@ -1,7 +1,8 @@
 import { SelectChangeEvent } from '@mui/material'
 
 export type TTicket = {
-  createdAt: number
+  created: number
+  createdAt?: number
   creator: string | number
   description: string
   id?: number
@@ -11,7 +12,8 @@ export type TTicket = {
   severity: string
   status: string
   solution: string
-  updatedAt: number
+  updated: number
+  updatedAt?: number
   updater: string | number
 }
 

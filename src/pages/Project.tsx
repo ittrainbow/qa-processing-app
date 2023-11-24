@@ -37,8 +37,8 @@ export const Project = observer(() => {
 
     if (user) {
       const date = new Date().getTime()
-      const userid = user.id || 0
-      const fillTicket = { createdAt: date, updatedAt: date, projectid: id, creator: userid, updater: userid }
+      const userid = (user.id || 0).toString()
+      const fillTicket = { created: date, updated: date, projectid: id, creator: userid, updater: userid }
       const ticket: TTicket = Object.assign(blankTicket, fillTicket)
       setTempTicket(ticket)
       setModalOpen(true)

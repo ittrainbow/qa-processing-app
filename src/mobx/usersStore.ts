@@ -29,7 +29,7 @@ class UsersStoreClass {
   getUsers: () => void = async () => {
     setLoading(true)
     await axios
-      .get('http://localhost:5000/api/user/getusers')
+      .get('http://localhost:5000/api/users/getall')
       .then((response) => response.data)
       .then((data) => this.setUsers(data))
       .catch((error) => handleError(error))
@@ -39,8 +39,9 @@ class UsersStoreClass {
   signupUser: (name: string, email: string, password: string) => void = async (name, email, password) => {
     setLoading(true)
     await axios
-      .post('http://localhost:5000/api/user/signup', { name, email, password })
+      .post('http://localhost:5000/api/users/signup', { name, email, password })
       .then((response) => response.data)
+      .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
       .finally(() => setLoading(false))
   }
@@ -48,7 +49,7 @@ class UsersStoreClass {
   loginUser: (email: string, password: string) => void = async (email, password) => {
     setLoading(true)
     await axios
-      .post('http://localhost:5000/api/user/login', { email, password })
+      .post('http://localhost:5000/api/users/login', { email, password })
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
@@ -62,7 +63,7 @@ class UsersStoreClass {
       Authorization: `Bearer ${token}`
     }
     await axios
-      .get('http://localhost:5000/api/user/auth', { headers })
+      .get('http://localhost:5000/api/users/auth', { headers })
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
@@ -71,10 +72,14 @@ class UsersStoreClass {
 
   updateUser: (user: TUser, name: string) => void = async (user, name) => {
     const { id } = user
+
     setLoading(true)
     await axios
-      .post('http://localhost:5000/api/user/update', { id, name })
-      .then(() => this.setUser({ ...this.user, name }))
+      .post('http://localhost:5000/api/users/update', { id, name })
+      .then(() => {
+        this.setUser({ ...this.user, name })
+        this.setUsers(this.users.map((user) => (user.id === id ? { ...user, name } : user)))
+      })
       .catch((error) => handleError(error))
       .finally(() => setLoading(false))
   }

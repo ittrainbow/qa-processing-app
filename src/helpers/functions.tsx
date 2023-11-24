@@ -19,13 +19,13 @@ export const sortHelper: (queue: TTicket[], style: string) => TTicket[] = (queue
   const newTickets = [...queue].sort((a: TTicket, b: TTicket) => {
     switch (style) {
       case 'updateasc':
-        return a.updatedAt - b.updatedAt
+        return a.updated - b.updated
       case 'updatedesc':
-        return b.updatedAt - a.updatedAt
+        return b.updated - a.updated
       case 'createasc':
-        return a.createdAt - b.createdAt
+        return a.created - b.created
       case 'createdesc':
-        return b.createdAt - a.createdAt
+        return b.created - a.created
       default:
         return 0
     }

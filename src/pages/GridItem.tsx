@@ -10,7 +10,7 @@ import { defaultUser } from '../types/initials'
 const { tickets } = ticketsStore
 
 export const GridItem = ({ ticket, filter, onClick }: TGridItemProps) => {
-  const { issue, createdAt, creator, id, severity, status, problem, updatedAt, updater } = ticket
+  const { issue, created, creator, id, severity, status, problem, updated, updater } = ticket
   const { users } = usersStore
   const classes = useStyles()
 
@@ -26,9 +26,9 @@ export const GridItem = ({ ticket, filter, onClick }: TGridItemProps) => {
   const viewTickethandler = () => id && onClick(tickets[id])
 
   return filter !== 'open' || status !== 'done' ? (
-    <Grid item key={updatedAt} className={classes.card}>
+    <Grid item key={updated} className={classes.card}>
       <Stack spacing={1} height={210} className={classes.gridItem}>
-        <Typography variant="h6">Ticket #{Number(id) + 1}</Typography>
+        <Typography variant="h6">Ticket #{Number(id)}</Typography>
         <Stack minHeight={40}>
           <Typography variant="body2">{issue.length > 70 ? issue.substring(0, 70) + '{...}' : issue}</Typography>
         </Stack>
@@ -52,10 +52,10 @@ export const GridItem = ({ ticket, filter, onClick }: TGridItemProps) => {
           </Stack>
           <Stack direction="column">
             <Typography fontSize={13}>
-              {isotime(Number(createdAt))} by {getName(creator)}
+              {isotime(Number(created))} by {getName(creator)}
             </Typography>
             <Typography fontSize={13}>
-              {isotime(Number(updatedAt))} by {getName(updater)}
+              {isotime(Number(updated))} by {getName(updater)}
             </Typography>
           </Stack>
         </Stack>

@@ -22,7 +22,7 @@ class ProjectsStoreClass {
   getProjects: () => void = async () => {
     setLoading(true)
     await axios
-      .get('http://localhost:5000/api/projects')
+      .get('http://localhost:5000/api/projects/getall')
       .then((response) => response.data)
       .then((data) => data.sort((a: TProject, b: TProject) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0)))
       .then((data) => this.setProjects(data))
