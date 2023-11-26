@@ -1,9 +1,10 @@
-import { makeObservable, observable, action } from 'mobx'
+import { makeObservable, observable, action, autorun } from 'mobx'
 import axios from 'axios'
 
 import { TAuth, TToken, TUser } from '../types/types'
 import { defaultUser } from '../types/initials'
 import { appStore } from './appStore'
+import { render } from '../url'
 
 const { handleError, setLoading } = appStore
 
@@ -24,12 +25,21 @@ class UsersStoreClass {
       signupUser: action,
       updateUser: action
     })
+    autorun(() => this.getUsers())
+    autorun(() => {
+      const token = localStorage.getItem('qaToken')
+      token && this.authUser(token)
+    })
+  }
+
+  get hasUsers() {
+    return !!this.users.length
   }
 
   getUsers: () => void = async () => {
     setLoading(true)
     await axios
-      .get('http://localhost:5000/api/users/getall')
+      .get(`${render}/api/users/getall`)
       .then((response) => response.data)
       .then((data) => this.setUsers(data))
       .catch((error) => handleError(error))
@@ -37,9 +47,10 @@ class UsersStoreClass {
   }
 
   signupUser: (name: string, email: string, password: string) => void = async (name, email, password) => {
+    const url = `${render}/api/users/signup`
     setLoading(true)
     await axios
-      .post('http://localhost:5000/api/users/signup', { name, email, password })
+      .post(url, { name, email, password })
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
@@ -49,7 +60,7 @@ class UsersStoreClass {
   loginUser: (email: string, password: string) => void = async (email, password) => {
     setLoading(true)
     await axios
-      .post('http://localhost:5000/api/users/login', { email, password })
+      .post(`${render}/api/users/login`, { email, password })
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
@@ -58,12 +69,13 @@ class UsersStoreClass {
 
   authUser: (token: string) => void = async (token) => {
     setLoading(true)
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    }
     await axios
-      .get('http://localhost:5000/api/users/auth', { headers })
+      .get(`${render}/api/users/auth`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authentication: `Bearer ${token}`
+        }
+      })
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
@@ -75,7 +87,7 @@ class UsersStoreClass {
 
     setLoading(true)
     await axios
-      .post('http://localhost:5000/api/users/update', { id, name })
+      .post(`${render}/api/users/update`, { id, name })
       .then(() => {
         this.setUser({ ...this.user, name })
         this.setUsers(this.users.map((user) => (user.id === id ? { ...user, name } : user)))

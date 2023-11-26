@@ -9,8 +9,8 @@ export class AppStoreClass {
   constructor() {
     makeObservable(this, {
       headerOpen: observable,
-      setHeaderOpen: action,
       loading: observable,
+      setHeaderOpen: action,
       setLoading: action,
       handleError: action
     })
@@ -20,11 +20,8 @@ export class AppStoreClass {
 
   setLoading: (value: boolean) => void = (value) => (this.loading = value)
 
-  handleError = (error: TAxiosError) => {
-    console.error(error)
-    const { data, status } = error.response
-    alert(`Error: ${data} (status code ${status})`)
-  }
+  handleError = (error: TAxiosError) =>
+    console.error(`ERROR: ${error?.response?.data} (status code ${error?.response?.status})`)
 }
 
 export const appStore = new AppStoreClass()

@@ -1,32 +1,18 @@
 import { useEffect } from 'react'
-import { runInAction, toJS } from 'mobx'
 import { observer } from 'mobx-react'
 
-import { projectsStore, usersStore, appStore, ticketsStore } from './mobx'
+import { projectsStore, usersStore, ticketsStore } from './mobx'
 import { Header } from './pages'
 
 export const App = observer(() => {
-  const { projects, getProjects } = projectsStore
-  const { users, getUsers, authUser } = usersStore
   const { getTickets } = ticketsStore
-  const { setLoading } = appStore
+  const { hasProjects } = projectsStore
+  const { hasUsers } = usersStore
 
   const { pathname } = window.location
 
   useEffect(() => {
-    runInAction(() => getProjects())
-    runInAction(() => getUsers()) // eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    const token = localStorage.getItem('qaToken')
-    token && authUser(token) // eslint-disable-next-line
-  }, [])
-
-  useEffect(() => {
-    if (pathname === '/' || pathname === '/projects') {
-      toJS(projects).length && setLoading(false)
-    } else if (pathname.includes('/projects/') && toJS(users).length) {
+    if (pathname.includes('/projects/') && hasUsers) {
       const path: string =
         pathname
           .split('/')
@@ -34,7 +20,7 @@ export const App = observer(() => {
           .at(-1) || ''
       getTickets(path)
     } // eslint-disable-next-line
-  }, [projects, users])
+  }, [hasProjects, hasUsers])
 
   return <Header />
 })

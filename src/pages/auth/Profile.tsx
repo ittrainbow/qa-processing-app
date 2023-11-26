@@ -18,7 +18,7 @@ export const Profile = observer(() => {
 
   const cancelHandler = () => navigate(-1)
 
-  const changes = token && user.name !== tempName
+  const changes = token && tempName !== '' && user.name !== tempName
 
   return (
     <Stack mt={10} alignItems="center">
