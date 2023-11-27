@@ -55,9 +55,8 @@ class TicketsStoreClass {
 
   createTicket: (ticket: TTicket) => void = async (ticket) => {
     setLoading(true)
-    const { data: id } = await axios.get(`${nodeserver}/api/tickets/get/last`)
     await axios
-      .post(`${nodeserver}/api/tickets/create`, { ...ticket, id })
+      .post(`${nodeserver}/api/tickets/create`, ticket)
       .then((response) => response.data)
       .then((ticket) => this.trimAts(ticket))
       .then((ticket) => this.setTickets(this.tickets.concat(ticket)))
