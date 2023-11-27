@@ -12,24 +12,24 @@ class UsersStoreClass {
   users: TUser[] = []
   user: TUser = defaultUser
   token: TToken = null
+  init: boolean = true
 
   constructor() {
     makeObservable(this, {
       users: observable,
       user: observable,
       token: observable,
+      init: observable,
       setUsers: action,
       setUser: action,
       setAuth: action,
+      setAuthFinally: action,
       clearToken: action,
       signupUser: action,
       updateUser: action
     })
     autorun(() => this.getUsers())
-    autorun(() => {
-      const token = localStorage.getItem('qaToken')
-      token && this.authUser(token)
-    })
+    autorun(() => this.authUser())
   }
 
   get hasUsers() {
@@ -67,8 +67,10 @@ class UsersStoreClass {
       .finally(() => setLoading(false))
   }
 
-  authUser: (token: string) => void = async (token) => {
+  authUser: () => void = async () => {
     setLoading(true)
+    const token: string | null = localStorage.getItem('qaToken')
+    if (!token) return this.setAuthFinally()
     await axios
       .get(`${nodeserver}/api/users/auth`, {
         headers: {
@@ -79,7 +81,7 @@ class UsersStoreClass {
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
-      .finally(() => setLoading(false))
+      .finally(this.setAuthFinally)
   }
 
   updateUser: (user: TUser, name: string) => void = async (user, name) => {
@@ -115,9 +117,14 @@ class UsersStoreClass {
     }
   }
 
+  setAuthFinally = () => {
+    setLoading(false)
+    this.init = false
+  }
+
   clearToken = () => {
-    this.token = null
     localStorage.removeItem('qaToken')
+    this.token = null
   }
 }
 

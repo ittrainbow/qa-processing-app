@@ -6,24 +6,31 @@ import { appStore, usersStore } from '../mobx'
 
 export const Header = observer(() => {
   const { headerOpen, setHeaderOpen } = appStore
-  const { token } = usersStore
+  const { token, logoutUser } = usersStore
   const navigate = useNavigate()
 
-  const onClickHandler = (e: HTMLDivElement) => {
+  const onClickHandler = (id: string): void => {
     setHeaderOpen(false)
 
-    switch (e.id) {
+    switch (id) {
       case 'toggler':
-        return !headerOpen && setHeaderOpen(true)
+        !headerOpen && setHeaderOpen(true)
+        break
 
       case 'userpage':
-        return token ? navigate('/userpage') : navigate('/login')
+        token ? navigate('/userpage') : navigate('/login')
+        break
 
       case 'projects':
-        return navigate('/projects')
+        navigate('/projects')
+        break
+
+      case 'logout':
+        logoutUser()
+        break
 
       default:
-        return
+        break
     }
   }
 
@@ -38,7 +45,7 @@ export const Header = observer(() => {
   const array = token ? icons.concat(iconsAuth) : icons
 
   return (
-    <div>
+    <>
       <div className={headerOpen ? 'header header__show' : 'header'}></div>
       <div>
         {array.map((el, index) => {
@@ -49,13 +56,13 @@ export const Header = observer(() => {
               id={id}
               style={{ left: `calc(5px + ${index * 60}px)` }}
               className="header__icon"
-              onClick={(e) => onClickHandler(e.currentTarget)}
+              onClick={() => onClickHandler(id)}
             >
               {icon}
             </div>
           )
         })}
       </div>
-    </div>
+    </>
   )
 })

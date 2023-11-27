@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { observer } from 'mobx-react'
 
 import { ProjectsList, Project, Home, Login, Signup, Reset, Profile, UserPage } from '../pages'
-import { appStore } from '../mobx'
+import { appStore, usersStore } from '../mobx'
 import { MyLoader } from '../UI'
 
 type RouterProps = {
@@ -11,10 +11,11 @@ type RouterProps = {
 
 export const Router = observer(({ children }: RouterProps) => {
   const { loading } = appStore
+  const { init } = usersStore
 
   return (
     <BrowserRouter>
-      {loading ? (
+      {loading || init ? (
         <MyLoader />
       ) : (
         <Routes>
