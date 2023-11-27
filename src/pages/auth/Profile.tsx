@@ -14,7 +14,10 @@ export const Profile = observer(() => {
     token && setTempName(user.name) // eslint-disable-next-line
   }, [token])
 
-  const submitHandler = () => updateUser(user, tempName)
+  const submitHandler = () => {
+    updateUser(user, tempName)
+    navigate(-1)
+  }
 
   const cancelHandler = () => navigate(-1)
 

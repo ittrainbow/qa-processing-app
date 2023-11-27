@@ -3,7 +3,7 @@ import axios from 'axios'
 
 import { TProject } from '../types/types'
 import { appStore } from './appStore'
-import { render } from '../url'
+import { nodeserver } from '../url'
 
 const { handleError, setLoading } = appStore
 
@@ -29,7 +29,7 @@ class ProjectsStoreClass {
   getProjects: () => void = async () => {
     setLoading(true)
     await axios
-      .get(`${render}/api/projects/getall`)
+      .get(`${nodeserver}/api/projects/getall`)
       .then((response) => response.data)
       .then((data) => data.sort((a: TProject, b: TProject) => (a.id > b.id ? 1 : a.id < b.id ? -1 : 0)))
       .then((data) => this.setProjects(data))

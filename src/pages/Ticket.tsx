@@ -42,7 +42,7 @@ export const Ticket = observer(({ ticket, modalOpen, onClose, creating, setTicke
             Submit
           </Button>
           <Button onClick={onClose}>Discard</Button>
-          {user.admin && (
+          {user.admin && !creating && (
             <Button onClick={deleteHandler} disabled={!user}>
               Delete
             </Button>

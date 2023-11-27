@@ -1,2 +1,1 @@
-export const render = 'https://sequelize-server-production.up.railway.app'
-// export const render = 'https://sequelize-server.onrender.com'
+export const nodeserver = process.env.REACT_APP_SERVER

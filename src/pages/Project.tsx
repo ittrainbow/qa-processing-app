@@ -76,9 +76,11 @@ export const Project = observer(() => {
           <Dropdown label="Sort" value={sort} onChange={sortHandler} />
         </Stack>
       </Stack>
-      <Button onClick={createTicket} disabled={!token}>
-        Create ticket
-      </Button>
+      <Stack mb={1}>
+        <Button onClick={createTicket} disabled={!token}>
+          Create ticket
+        </Button>
+      </Stack>
       <Grid container spacing={2}>
         {queue.map((el: TTicket) => {
           const ticket = toJS(el)

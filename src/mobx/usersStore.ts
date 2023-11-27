@@ -4,7 +4,7 @@ import axios from 'axios'
 import { TAuth, TToken, TUser } from '../types/types'
 import { defaultUser } from '../types/initials'
 import { appStore } from './appStore'
-import { render } from '../url'
+import { nodeserver } from '../url'
 
 const { handleError, setLoading } = appStore
 
@@ -39,7 +39,7 @@ class UsersStoreClass {
   getUsers: () => void = async () => {
     setLoading(true)
     await axios
-      .get(`${render}/api/users/getall`)
+      .get(`${nodeserver}/api/users/getall`)
       .then((response) => response.data)
       .then((data) => this.setUsers(data))
       .catch((error) => handleError(error))
@@ -47,7 +47,7 @@ class UsersStoreClass {
   }
 
   signupUser: (name: string, email: string, password: string) => void = async (name, email, password) => {
-    const url = `${render}/api/users/signup`
+    const url = `${nodeserver}/api/users/signup`
     setLoading(true)
     await axios
       .post(url, { name, email, password })
@@ -60,7 +60,7 @@ class UsersStoreClass {
   loginUser: (email: string, password: string) => void = async (email, password) => {
     setLoading(true)
     await axios
-      .post(`${render}/api/users/login`, { email, password })
+      .post(`${nodeserver}/api/users/login`, { email, password })
       .then((response) => response.data)
       .then((data) => this.setAuth(data))
       .catch((error) => handleError(error))
@@ -70,7 +70,7 @@ class UsersStoreClass {
   authUser: (token: string) => void = async (token) => {
     setLoading(true)
     await axios
-      .get(`${render}/api/users/auth`, {
+      .get(`${nodeserver}/api/users/auth`, {
         headers: {
           'Content-Type': 'application/json',
           Authentication: `Bearer ${token}`
@@ -87,7 +87,7 @@ class UsersStoreClass {
 
     setLoading(true)
     await axios
-      .post(`${render}/api/users/update`, { id, name })
+      .post(`${nodeserver}/api/users/update`, { id, name })
       .then(() => {
         this.setUser({ ...this.user, name })
         this.setUsers(this.users.map((user) => (user.id === id ? { ...user, name } : user)))
