@@ -1,7 +1,8 @@
 QA processing app on React, Typescript, MUI, MobX & Postgres
 
-link: https://tickets-app-aeeed.web.app/
 
 server: https://github.com/ittrainbow/sequelize-server
+
+applink: https://tickets-app-aeeed.web.app/
 
 server via Express, ORM is Sequelize, written in JS 'cause Node hosting (railway.app) do not accept TS and cannot run tsc compiler, while typing was pretty simple, just removed later for environment compatibility reasons
